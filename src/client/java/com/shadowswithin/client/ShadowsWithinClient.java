@@ -77,7 +77,7 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             double x = p.x + Math.sin(angle) * distance;
             double z = p.z - Math.cos(angle) * distance;
             client.level.playLocalSound(x, p.y, z, SoundEvents.STONE_STEP, SoundSource.AMBIENT,
-                    0.72F, 0.82F + client.level.random.nextFloat() * 0.22F, false);
+                    0.72F, 0.82F + ThreadLocalRandom.current().nextFloat() * 0.22F, false);
             distance = Math.max(2.8, distance - 0.45);
             return --beats <= 0;
         }
@@ -105,7 +105,7 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             Vec3 p = client.player.position();
             double x = p.x + Math.sin(angle) * distance;
             double z = p.z - Math.cos(angle) * distance;
-            float pitch = Mth.clamp(0.72F + client.level.random.nextFloat() * 0.22F, 0.5F, 1.2F);
+            float pitch = Mth.clamp(0.72F + ThreadLocalRandom.current().nextFloat() * 0.22F, 0.5F, 1.2F);
             client.level.playLocalSound(x, p.y + verticalOffset, z, SoundEvents.STONE_HIT,
                     SoundSource.AMBIENT, 0.9F, pitch, false);
             distance = Math.max(3.5, distance - 0.8);
