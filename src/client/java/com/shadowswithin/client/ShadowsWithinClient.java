@@ -59,13 +59,13 @@ public final class ShadowsWithinClient implements ClientModInitializer {
     }
 
     static final class AmbientDirector {
-        private int quietTicks = 20 * 35;
+        private int quietTicks = 20 * 12;
         private int tension;
         private MinorEvent activeEvent;
         private WatcherEvent watcher;
-        private int watcherCooldown = 20 * 90;
+        private int watcherCooldown = 20 * 45;
         private ChaseEvent chase;
-        private int chaseCooldown = 20 * 180;
+        private int chaseCooldown = 20 * 90;
 
         void pause() { }
 
@@ -73,8 +73,8 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             if (chase != null) {
                 if (chase.tick(client)) {
                     chase = null;
-                    chaseCooldown = ThreadLocalRandom.current().nextInt(20 * 720, 20 * 1800);
-                    quietTicks = Math.max(quietTicks, 20 * 100);
+                    chaseCooldown = ThreadLocalRandom.current().nextInt(20 * 150, 20 * 240);
+                    quietTicks = Math.max(quietTicks, 20 * 25);
                     tension = Math.max(5, tension - 45);
                 }
                 return;
@@ -82,8 +82,8 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             if (watcher != null) {
                 if (watcher.tick(client)) {
                     watcher = null;
-                    watcherCooldown = ThreadLocalRandom.current().nextInt(20 * 300, 20 * 720);
-                    quietTicks = Math.max(quietTicks, 20 * 70);
+                    watcherCooldown = ThreadLocalRandom.current().nextInt(20 * 90, 20 * 150);
+                    quietTicks = Math.max(quietTicks, 20 * 20);
                 }
                 return;
             }
@@ -115,7 +115,7 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             activeEvent = rng.nextInt(100) < 62
                     ? new FootstepEvent(client, rng)
                     : new MiningEvent(client, rng);
-            quietTicks = rng.nextInt(20 * 40, 20 * 105);
+            quietTicks = rng.nextInt(20 * 12, 20 * 28);
         }
 
         boolean shouldRenderWatcher() {
