@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "shadows_within",
+  "version": "${version}",
+  "name": "Shadows Within",
+  "description": "An ambient psychological horror mod where the world sometimes notices you back.",
+  "authors": ["Austin4557"],
+  "environment": "client",
+  "entrypoints": { "client": ["com.shadowswithin.client.ShadowsWithinClient"] },
+  "depends": { "fabricloader": ">=0.19.5", "minecraft": "~26.2", "java": ">=25", "fabric-api": "*" }
+}
