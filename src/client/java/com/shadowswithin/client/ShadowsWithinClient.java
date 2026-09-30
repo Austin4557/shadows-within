@@ -4,7 +4,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.minecraft.client.Minecraft;\nimport net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,7 +13,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public final class ShadowsWithinClient implements ClientModInitializer {
-    private static final Identifier WATCHER_HUD = Identifier.fromNamespaceAndPath("shadows_within", "watcher");\n    private static final Identifier WATCHER_TEXTURE = Identifier.fromNamespaceAndPath("shadows_within", "textures/gui/watcher.png");
+    private static final Identifier WATCHER_HUD = Identifier.fromNamespaceAndPath("shadows_within", "watcher");
+    private static final Identifier WATCHER_TEXTURE = Identifier.fromNamespaceAndPath("shadows_within", "textures/gui/watcher.png");
     private final AmbientDirector director = new AmbientDirector();
 
     @Override
