@@ -4,7 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.Minecraft;\nimport net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,7 +12,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public final class ShadowsWithinClient implements ClientModInitializer {
-    private static final Identifier WATCHER_HUD = Identifier.fromNamespaceAndPath("shadows_within", "watcher");
+    private static final Identifier WATCHER_HUD = Identifier.fromNamespaceAndPath("shadows_within", "watcher");\n    private static final Identifier WATCHER_TEXTURE = Identifier.fromNamespaceAndPath("shadows_within", "textures/gui/watcher.png");
     private final AmbientDirector director = new AmbientDirector();
 
     @Override
@@ -23,18 +23,14 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             Minecraft client = Minecraft.getInstance();
             int width = client.getWindow().getGuiScaledWidth();
             int height = client.getWindow().getGuiScaledHeight();
-            int figureHeight = Math.max(72, height * 3 / 5);
-            int figureWidth = Math.max(18, figureHeight / 5);
+            int figureHeight = Math.max(96, height * 2 / 3);
+            int figureWidth = Math.max(85, figureHeight * 680 / 768);
             int centerX = width / 2 + director.watcherScreenOffset(width);
-            int feetY = height * 9 / 10;
-            int topY = feetY - figureHeight;
+            int feetY = height * 19 / 20;
             int left = centerX - figureWidth / 2;
-            int right = centerX + figureWidth / 2;
-            int head = Math.max(8, figureWidth * 2 / 3);
-            graphics.fill(left, topY + head, right, feetY, 0xEE050505);
-            graphics.fill(centerX - head / 2, topY, centerX + head / 2, topY + head, 0xF20A0A0A);
-            graphics.fill(centerX - head / 4, topY + head / 3, centerX - 1, topY + head / 2, 0xFFB7B7B7);
-            graphics.fill(centerX + 1, topY + head / 3, centerX + head / 4, topY + head / 2, 0xFFB7B7B7);
+            int top = feetY - figureHeight;
+            graphics.blit(RenderPipelines.GUI_TEXTURED, WATCHER_TEXTURE,
+                    left, top, 0.0F, 0.0F, figureWidth, figureHeight, figureWidth, figureHeight);
         });
     }
 
