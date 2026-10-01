@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.registries.BuiltInRegistries;\nimport net.minecraft.sounds.SoundEvent;\nimport net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -15,8 +15,8 @@ import net.minecraft.world.phys.Vec3;
 public final class ShadowsWithinClient implements ClientModInitializer {
     private static final Identifier WATCHER_HUD = Identifier.fromNamespaceAndPath("shadows_within", "watcher");
     private static final Identifier WATCHER_TEXTURE = Identifier.fromNamespaceAndPath("shadows_within", "textures/gui/watcher.png");
-    private static final Identifier CHASE_HUD = Identifier.fromNamespaceAndPath("shadows_within", "chase");
-    private final AmbientDirector director = new AmbientDirector();
+    private static final Identifier CHASE_HUD = Identifier.fromNamespaceAndPath("shadows_within", "chase");\n    private static final Identifier AUSTIN_WHISPER_ID = Identifier.fromNamespaceAndPath("shadows_within", "austin_whisper");\n    private static final SoundEvent AUSTIN_WHISPER = SoundEvent.createVariableRangeEvent(AUSTIN_WHISPER_ID);
+    private final AmbientDirector director = new AmbientDirector();\n\n    static {\n        BuiltInRegistries.SOUND_EVENT.register(AUSTIN_WHISPER_ID, AUSTIN_WHISPER);\n    }
 
     @Override
     public void onInitializeClient() {
@@ -112,9 +112,12 @@ public final class ShadowsWithinClient implements ClientModInitializer {
                 return;
             }
 
-            activeEvent = rng.nextInt(100) < 62
+            int minorRoll = rng.nextInt(100);
+            activeEvent = minorRoll < 55
                     ? new FootstepEvent(client, rng)
-                    : new MiningEvent(client, rng);
+                    : minorRoll < 90
+                    ? new MiningEvent(client, rng)
+                    : new WhisperEvent(client, rng);
             quietTicks = rng.nextInt(20 * 12, 20 * 28);
         }
 
@@ -209,6 +212,33 @@ public final class ShadowsWithinClient implements ClientModInitializer {
                 return false;
             }
             return --lifetime <= 0;
+        }
+    }
+
+    static final class WhisperEvent implements MinorEvent {
+        private int delayTicks;
+        private final double angle;
+        private final double distance;
+        private final float pitch;
+
+        WhisperEvent(Minecraft client, ThreadLocalRandom rng) {
+            delayTicks = rng.nextInt(8, 28);
+            angle = Math.toRadians(client.player.getYRot() + 180.0 + rng.nextDouble(-70.0, 70.0));
+            distance = rng.nextDouble(3.5, 7.5);
+            pitch = 0.96F + rng.nextFloat() * 0.08F;
+        }
+
+        @Override
+        public boolean tick(Minecraft client) {
+            if (--delayTicks > 0) return false;
+            Vec3 p = client.player.position();
+            client.level.playLocalSound(
+                    p.x + Math.sin(angle) * distance,
+                    p.y + ThreadLocalRandom.current().nextDouble(-0.3, 0.8),
+                    p.z - Math.cos(angle) * distance,
+                    AUSTIN_WHISPER, SoundSource.AMBIENT,
+                    0.72F, pitch, false);
+            return true;
         }
     }
 
