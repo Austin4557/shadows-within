@@ -75,6 +75,7 @@ public final class ShadowsWithinClient implements ClientModInitializer {
         private int watcherCooldown = 20 * 45;
         private ChaseEvent chase;
         private int chaseCooldown = 20 * 90;
+        private int silenceCooldown = 20 * 75;
 
         void pause() { }
 
@@ -103,6 +104,7 @@ public final class ShadowsWithinClient implements ClientModInitializer {
 
             if (watcherCooldown > 0) watcherCooldown--;
             if (chaseCooldown > 0) chaseCooldown--;
+            if (silenceCooldown > 0) silenceCooldown--;
             if (quietTicks-- > 0) return;
 
             ThreadLocalRandom rng = ThreadLocalRandom.current();
@@ -118,6 +120,13 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             if (watcherCooldown <= 0 && tension >= 45 && rng.nextInt(100) < 24) {
                 watcher = new WatcherEvent(client, rng);
                 tension = Math.max(10, tension - 35);
+                return;
+            }
+
+            // Silence is intentionally mostly a fake-out: a short stretch with no event at all.
+            if (silenceCooldown <= 0 && rng.nextInt(100) < 12) {
+                silenceCooldown = rng.nextInt(20 * 150, 20 * 300);
+                quietTicks = rng.nextInt(20 * 5, 20 * 11);
                 return;
             }
 
@@ -257,18 +266,25 @@ public final class ShadowsWithinClient implements ClientModInitializer {
         private final int interval;
         private final double angle;
         private double distance;
+        private final boolean mirrorsPlayer;
+        private Vec3 lastPlayerPosition;
 
         FootstepEvent(Minecraft client, ThreadLocalRandom rng) {
             interval = rng.nextInt(7, 13);
             beats = rng.nextInt(3, 8);
             distance = rng.nextDouble(4.5, 10.5);
             angle = Math.toRadians(client.player.getYRot() + 180.0 + rng.nextDouble(-55.0, 55.0));
+            mirrorsPlayer = rng.nextInt(100) < 32;
+            lastPlayerPosition = client.player.position();
         }
 
         @Override
         public boolean tick(Minecraft client) {
-            if (++ticks % interval != 0) return false;
             Vec3 p = client.player.position();
+            double playerMoved = p.distanceTo(lastPlayerPosition);
+            lastPlayerPosition = p;
+            if (mirrorsPlayer && playerMoved < 0.025) return false;
+            if (++ticks % interval != 0) return false;
             double x = p.x + Math.sin(angle) * distance;
             double z = p.z - Math.cos(angle) * distance;
             client.level.playLocalSound(x, p.y, z, SoundEvents.STONE_STEP, SoundSource.AMBIENT,
