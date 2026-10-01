@@ -168,7 +168,7 @@ public final class ShadowsWithinClient implements ClientModInitializer {
         private Vec3 lastPosition;
         private int ticks;
         private int catchTicks;
-        private int lifetime = 20 * 45;
+        private int lifetime = 20 * 60;
 
         ChaseEvent(Minecraft client, ThreadLocalRandom rng) {
             distance = rng.nextDouble(20.0, 28.0);
@@ -182,10 +182,11 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             double moved = now.distanceTo(lastPosition);
             lastPosition = now;
 
-            // Standing still lets it gain quickly. Moving decisively buys distance.
-            if (moved < 0.045) distance -= 0.085;
-            else if (moved > 0.19) distance += 0.045;
-            else distance -= 0.025;
+            // The final 15 seconds are a pressure phase: it gains faster, but escape remains possible.
+            boolean finalPressure = lifetime <= 20 * 15;
+            if (moved < 0.045) distance -= finalPressure ? 0.135 : 0.085;
+            else if (moved > 0.19) distance += finalPressure ? 0.025 : 0.045;
+            else distance -= finalPressure ? 0.050 : 0.025;
 
             if (++ticks % 16 == 0) {
                 float volume = (float)Mth.clamp(1.35 - distance / 28.0, 0.28, 1.05);
@@ -202,7 +203,9 @@ public final class ShadowsWithinClient implements ClientModInitializer {
             if (distance >= 38.0) return true;
             if (distance <= 1.8) {
                 catchTicks = 12;
-                client.player.playSound(SoundEvents.ENDERMAN_STARE, 0.75F, 0.62F);
+                // Layer a sharp, high scare sting over the low Enderman hit for a stronger catch surprise.
+                client.player.playSound(SoundEvents.ENDERMAN_STARE, 0.78F, 0.62F);
+                client.player.playSound(SoundEvents.GHAST_SCREAM, 0.82F, 1.65F);
                 return false;
             }
             return --lifetime <= 0;
