@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -23,7 +24,7 @@ public final class ShadowsWithinClient implements ClientModInitializer {
     private final AmbientDirector director = new AmbientDirector();
 
     static {
-        BuiltInRegistries.SOUND_EVENT.register(AUSTIN_WHISPER_ID, AUSTIN_WHISPER);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, AUSTIN_WHISPER_ID, AUSTIN_WHISPER);
     }
 
     @Override
