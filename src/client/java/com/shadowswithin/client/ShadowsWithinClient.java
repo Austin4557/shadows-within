@@ -7,7 +7,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
-import net.minecraft.core.registries.BuiltInRegistries;\nimport net.minecraft.sounds.SoundEvent;\nimport net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -15,8 +17,14 @@ import net.minecraft.world.phys.Vec3;
 public final class ShadowsWithinClient implements ClientModInitializer {
     private static final Identifier WATCHER_HUD = Identifier.fromNamespaceAndPath("shadows_within", "watcher");
     private static final Identifier WATCHER_TEXTURE = Identifier.fromNamespaceAndPath("shadows_within", "textures/gui/watcher.png");
-    private static final Identifier CHASE_HUD = Identifier.fromNamespaceAndPath("shadows_within", "chase");\n    private static final Identifier AUSTIN_WHISPER_ID = Identifier.fromNamespaceAndPath("shadows_within", "austin_whisper");\n    private static final SoundEvent AUSTIN_WHISPER = SoundEvent.createVariableRangeEvent(AUSTIN_WHISPER_ID);
-    private final AmbientDirector director = new AmbientDirector();\n\n    static {\n        BuiltInRegistries.SOUND_EVENT.register(AUSTIN_WHISPER_ID, AUSTIN_WHISPER);\n    }
+    private static final Identifier CHASE_HUD = Identifier.fromNamespaceAndPath("shadows_within", "chase");
+    private static final Identifier AUSTIN_WHISPER_ID = Identifier.fromNamespaceAndPath("shadows_within", "austin_whisper");
+    private static final SoundEvent AUSTIN_WHISPER = SoundEvent.createVariableRangeEvent(AUSTIN_WHISPER_ID);
+    private final AmbientDirector director = new AmbientDirector();
+
+    static {
+        BuiltInRegistries.SOUND_EVENT.register(AUSTIN_WHISPER_ID, AUSTIN_WHISPER);
+    }
 
     @Override
     public void onInitializeClient() {
