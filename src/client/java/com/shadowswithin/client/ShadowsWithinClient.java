@@ -163,18 +163,33 @@ public final class ShadowsWithinClient implements ClientModInitializer {
         private int visibleTicks;
         private boolean visible;
         private float lastYawDifference;
+        private final int behavior;
+        private int seenCount;
 
         WatcherEvent(Minecraft client, ThreadLocalRandom rng) {
             targetYaw = Mth.wrapDegrees(client.player.getYRot() + 180.0F + rng.nextFloat(-28.0F, 28.0F));
+            behavior = rng.nextInt(100);
         }
 
         boolean tick(Minecraft client) {
             lastYawDifference = Mth.wrapDegrees(targetYaw - client.player.getYRot());
             if (!visible && Math.abs(lastYawDifference) < 38.0F) {
                 visible = true;
-                visibleTicks = ThreadLocalRandom.current().nextInt(9, 22);
+                seenCount++;
+                // Most sightings are fleeting. Some Watchers hold their ground much longer.
+                visibleTicks = behavior < 68
+                        ? ThreadLocalRandom.current().nextInt(9, 22)
+                        : ThreadLocalRandom.current().nextInt(38, 82);
             }
-            if (visible && --visibleTicks <= 0) return true;
+            if (visible && --visibleTicks <= 0) {
+                // Rarely it disappears, waits unseen, then allows one second sighting.
+                if (behavior >= 92 && seenCount == 1) {
+                    visible = false;
+                    lifetime = Math.max(lifetime, ThreadLocalRandom.current().nextInt(20 * 3, 20 * 7));
+                    return false;
+                }
+                return true;
+            }
             return --lifetime <= 0;
         }
 
